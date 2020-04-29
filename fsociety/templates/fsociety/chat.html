@@ -1,0 +1,57 @@
+{%extends "base.html"%}
+{%block main_container%}
+<h1>{{receiver}}</h1>
+<div id="messages">
+</div>
+<form onsubmit="send_message()" method="POST" name="message" id="msg">
+    {% csrf_token %}
+    <input type="hidden" name="receiver_id" value="{{receiver.id}}">
+    <input type="text" name="new_message" id="new_message" placeholder="Message"/>
+    <input type="button" value="send" name="send" id="send_button" onclick="sendMessage()">
+</form>
+<script>
+function getMessages(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '{% url "fsociety:get_messages" receiver.id %}', true);
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (this.readyState != 4) return;
+        if (this.status != 200) {
+            console.log( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+        }
+        else{
+            messages.innerText = "";
+            let response = JSON.parse(this.responseText).data
+            response.forEach(function(item, i, arr) {
+                let li = document.createElement("li");
+                li.innerText = item.sender + ": " + item.text;
+                messages.appendChild(li);
+            });
+        }
+    }
+}
+
+getMessages();
+//setInterval(getMessages, 500);
+
+function sendMessage() {
+    let data = new FormData(document.forms.message);
+    console.log(data)
+    var msg = new XMLHttpRequest();
+    msg.open('POST', "{% url 'fsociety:set_messages' user.id %}", true);
+    msg.send(data);
+    msg.onreadystatechange = function() {
+        if (this.readyState != 4) return;
+        if (this.status != 200) {
+            console.log( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+        }
+        else{
+            let newMessage = document.getElementById("new_message")
+            newMessage.value = "";
+            console.log(2)
+            getMessages();
+        }
+    }
+}
+</script>
+{% endblock %}
