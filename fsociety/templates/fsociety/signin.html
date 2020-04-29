@@ -1,0 +1,14 @@
+{%extends "base.html"%}
+{%block main_container%}
+<h1>Sign in</h1>
+{{ message }}
+<form method="POST" name="sign_in" action="{% url 'fsociety:login' %}">
+    {% csrf_token %}
+    <input type="text" name="username"  placeholder="Username"/>
+    <input type="password" name="password" placeholder="Password"/>
+    <input type="submit" value="sign in" name="submit" id="send_button" />
+</form>
+{% endblock %}
+{% block sidebar %}
+Current user: {{user}}
+{% endblock %}

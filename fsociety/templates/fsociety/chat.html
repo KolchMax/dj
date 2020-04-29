@@ -32,7 +32,7 @@ function getMessages(){
 }
 
 getMessages();
-//setInterval(getMessages, 500);
+setInterval(getMessages, 500);
 
 function sendMessage() {
     let data = new FormData(document.forms.message);
@@ -54,4 +54,7 @@ function sendMessage() {
     }
 }
 </script>
+{% endblock %}
+{% block sidebar %}
+Current user: {{user}}
 {% endblock %}
